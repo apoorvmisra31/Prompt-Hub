@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import ChatMobileBar from "../components/chat/ChatMobileBar.jsx";
 import ChatSidebar from "../components/chat/ChatSideBar.jsx";
@@ -7,7 +7,6 @@ import ChatComposer from "../components/chat/ChatComposer.jsx";
 import "../components/chat/ChatLayout.css";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import {
   ensureInitialChat,
@@ -30,10 +29,64 @@ const Home = () => {
   const isSending = useSelector((state) => state.chat.isSending);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [socket, setSocket] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const socketRef = useRef(null);
 
   const activeChat = chats.find((c) => c.id === activeChatId) || null;
 
-  const [messages, setMessages] = useState([]);
+  // Step 1: Verify authentication via API call (no client-side cookie reading)
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+        withCredentials: true,
+      })
+      .then(() => {
+        setAuthChecked(true);
+      })
+      .catch(() => {
+        navigate("/login", { replace: true });
+      });
+  }, [navigate]);
+
+  // Step 2: Only after auth is confirmed, fetch chats and connect Socket.IO
+  useEffect(() => {
+    if (!authChecked) return;
+
+    // Fetch existing chats
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/chat`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        dispatch(setChats(response.data.chats.reverse()));
+      });
+
+    // Connect Socket.IO only after auth is verified
+    const tempSocket = io(import.meta.env.VITE_API_URL, {
+      withCredentials: true,
+    });
+
+    tempSocket.on("ai-response", (messagePayload) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          type: "ai",
+          content: messagePayload.content,
+        },
+      ]);
+      dispatch(sendingFinished());
+    });
+
+    socketRef.current = tempSocket;
+    setSocket(tempSocket);
+
+    // Cleanup on unmount
+    return () => {
+      tempSocket.disconnect();
+      socketRef.current = null;
+    };
+  }, [authChecked, dispatch]);
 
   const handleNewChat = async () => {
     let title = window.prompt("Enter a title for the new chat:", "");
@@ -42,46 +95,13 @@ const Home = () => {
 
     const response = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/chat`,
-      {
-        title,
-      },
-      {
-        withCredentials: true,
-      }
+      { title },
+      { withCredentials: true }
     );
     getMessages(response.data.chat._id);
     dispatch(startNewChat(response.data.chat));
     setSidebarOpen(false);
   };
-
-  useEffect(() => {
-    if (!Cookies.get("token")) {
-    } else {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/chat`, { withCredentials: true })
-        .then((response) => {
-          dispatch(setChats(response.data.chats.reverse()));
-        });
-
-      const tempSocket = io(import.meta.env.VITE_API_URL, {
-        withCredentials: true,
-      });
-
-      tempSocket.on("ai-response", (messagePayload) => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            type: "ai",
-            content: messagePayload.content,
-          },
-        ]);
-
-        dispatch(sendingFinished());
-      });
-
-      setSocket(tempSocket);
-    }
-  }, []);
 
   const sendMessage = async () => {
     const trimmed = input.trim();
@@ -119,21 +139,19 @@ const Home = () => {
     );
   };
 
-  const handleDelete = async() => {
-    await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/auth/delete`,
-      { withCredentials: true }
-    );
+  const handleDelete = async () => {
+    await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/delete`, {
+      withCredentials: true,
+    });
     navigate("/register");
-  }
+  };
 
-  const handleLogout = async() => {
-    await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/auth/logout`,
-      { withCredentials: true }
-    );
+  const handleLogout = async () => {
+    await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {
+      withCredentials: true,
+    });
     navigate("/login");
-  }
+  };
 
   const handleRegenerate = useCallback(() => {
     if (!socket || !activeChatId || isSending) return;
@@ -152,7 +170,10 @@ const Home = () => {
     });
   }, [socket, activeChatId, isSending, messages, dispatch]);
 
-  return Cookies.get("token") ? (
+  // Show nothing while verifying authentication
+  if (!authChecked) return null;
+
+  return (
     <div className="chat-layout minimal">
       <ChatMobileBar
         onToggleSidebar={() => setSidebarOpen((o) => !o)}
@@ -210,41 +231,6 @@ const Home = () => {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-    </div>
-  ) : (
-    <div>
-      <header className="top-nav">
-        <div
-          className="nav-left"
-          style={{ cursor: "pointer" }}
-          onClick={() => navigate("/")}
-        >
-          <span className="brand-icon" aria-hidden="true">
-            <i className="robot ri-robot-2-fill"></i>
-          </span>
-          <span className="brand-text">Prompt Hub</span>
-        </div>
-        <div className="nav-right">
-          <button className="secondary-btn" onClick={() => navigate("/login")}>
-            Login
-          </button>
-          <button className="primary-btn" onClick={() => navigate("/register")}>
-            Register
-          </button>
-        </div>
-      </header>
-
-      <div className="landing-wrapper">
-        <div className="landing-card">
-          <div className="chip"><h2>Use in Dark Theme</h2></div>
-          <h1>Prompt Hub</h1>
-          <h3>
-            Ask anything. Paste text, brainstorm ideas, or get quick
-            explanations. Your chats stay in the sidebar so you can pick up
-            where you left off.
-          </h3>
-        </div>
-      </div>
     </div>
   );
 };

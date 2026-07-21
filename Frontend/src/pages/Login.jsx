@@ -25,7 +25,7 @@ const Login = () => {
                 withCredentials: true
             }
         ).then((res) => {
-            navigate("/");
+            navigate("/home");
         }).catch((err) => {
             if (err.response && err.response.data && err.response.data.message) {
                 setError(err.response.data.message);

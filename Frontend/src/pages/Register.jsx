@@ -38,7 +38,7 @@ const Register = () => {
         }
       )
       .then((res) => {
-        navigate("/");
+        navigate("/home");
       })
       .catch((err) => {
         if (err.response && err.response.data && err.response.data.message) {
