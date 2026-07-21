@@ -41,7 +41,7 @@ const Home = () => {
     if (!title) return;
 
     const response = await axios.post(
-      "http://localhost:3000/api/chat",
+      `${import.meta.env.VITE_API_URL}/api/chat`,
       {
         title,
       },
@@ -58,12 +58,12 @@ const Home = () => {
     if (!Cookies.get("token")) {
     } else {
       axios
-        .get("http://localhost:3000/api/chat", { withCredentials: true })
+        .get(`${import.meta.env.VITE_API_URL}/api/chat`, { withCredentials: true })
         .then((response) => {
           dispatch(setChats(response.data.chats.reverse()));
         });
 
-      const tempSocket = io("http://localhost:3000", {
+      const tempSocket = io(import.meta.env.VITE_API_URL, {
         withCredentials: true,
       });
 
@@ -107,7 +107,7 @@ const Home = () => {
 
   const getMessages = async (chatId) => {
     const response = await axios.get(
-      `http://localhost:3000/api/chat/messages/${chatId}`,
+      `${import.meta.env.VITE_API_URL}/api/chat/messages/${chatId}`,
       { withCredentials: true }
     );
 
@@ -121,7 +121,7 @@ const Home = () => {
 
   const handleDelete = async() => {
     await axios.get(
-      `http://localhost:3000/api/auth/delete`,
+      `${import.meta.env.VITE_API_URL}/api/auth/delete`,
       { withCredentials: true }
     );
     navigate("/register");
@@ -129,7 +129,7 @@ const Home = () => {
 
   const handleLogout = async() => {
     await axios.get(
-      `http://localhost:3000/api/auth/logout`,
+      `${import.meta.env.VITE_API_URL}/api/auth/logout`,
       { withCredentials: true }
     );
     navigate("/login");

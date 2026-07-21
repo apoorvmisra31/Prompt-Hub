@@ -17,7 +17,7 @@ const Login = () => {
         e.preventDefault();
         setSubmitting(true);
 
-        axios.post("http://localhost:3000/api/auth/login", {
+        axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
             email: form.email,
             password: form.password
         },
