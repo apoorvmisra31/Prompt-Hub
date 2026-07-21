@@ -9,12 +9,21 @@ const { createMemory, queryMemory } = require("../services/vector.service")
 function initSocketServer(httpServer) {
 
     const io = new Server(httpServer, {
-        cors: {
-           origin: ["http://localhost:5173","https://prompt-hub-git-main-apoorvmisra31s-projects.vercel.app/"],
-            allowedHeaders: ["Content-Type", "Authorization"],
-            credentials: true
-        }
-    })
+    cors: {
+        origin: function (origin, callback) {
+            if (
+                !origin ||
+                origin === "http://localhost:5173" ||
+                origin.endsWith(".vercel.app")
+            ) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        credentials: true
+    }
+});
 
     io.use(async (socket, next) => {
 

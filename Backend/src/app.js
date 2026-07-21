@@ -10,8 +10,18 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors({
-    origin: ["http://localhost:5173","https://prompt-hub-git-main-apoorvmisra31s-projects.vercel.app/"],
-credentials: true,
+  origin: function (origin, callback) {
+    if (
+      !origin ||
+      origin === "http://localhost:5173" ||
+      origin.endsWith(".vercel.app")
+    ) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
 }));
 
 app.use('/api/auth', authRoute);
