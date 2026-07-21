@@ -8,6 +8,16 @@ const path = require('path');
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Security headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  next();
+});
+
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors({
   origin: function (origin, callback) {

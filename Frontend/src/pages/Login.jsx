@@ -42,8 +42,12 @@ const Login = () => {
         <div className="center-min-h-screen">
             <div className="auth-card" role="main" aria-labelledby="login-heading">
                 <header className="auth-header">
+                    <div className="auth-brand" aria-hidden="true">
+                        <i className="ri-robot-2-fill" style={{ fontSize: '2rem', color: 'var(--color-primary)' }}></i>
+                        <span style={{ fontWeight: 'var(--font-weight-semibold)', fontSize: '1.1rem' }}>Prompt Hub</span>
+                    </div>
                     <h1 id="login-heading">Sign in</h1>
-                    <p className="auth-sub">Welcome back. We've missed you.</p>
+                    <p className="auth-sub">Welcome back to Prompt Hub.</p>
                 </header>
                 <form className="auth-form" onSubmit={handleSubmit} noValidate>
                     <div className="field-group">
