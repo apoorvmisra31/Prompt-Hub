@@ -20,7 +20,11 @@ async function registerController(req, res) {
         email
     })
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    res.cookie('token', token);
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+});
 
     res.status(201).json({
         message: 'User registered successfully',
@@ -30,7 +34,9 @@ async function registerController(req, res) {
 
 async function loginController(req, res) {
     const { email, password } = req.body;
+    console.log(req.body);
     const isUserExist = await userModel.findOne({ email });
+    console.log(isUserExist);
     if (!isUserExist) {
         return res.status(400).json({ message: 'User not exists' });
     }
@@ -41,7 +47,11 @@ async function loginController(req, res) {
     }
 
     const token = jwt.sign({ id: isUserExist._id }, process.env.JWT_SECRET);
-    res.cookie('token', token);
+    res.cookie("token", token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+});
 
     res.status(201).json({
         message: 'User logged in successfully',
