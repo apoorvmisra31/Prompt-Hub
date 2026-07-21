@@ -10,7 +10,7 @@ function initSocketServer(httpServer) {
 
     const io = new Server(httpServer, {
         cors: {
-            origin: "http://localhost:5173",
+           origin: ["http://localhost:5173","https://prompt-hub-nine-nu.vercel.app"],
             allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true
         }
