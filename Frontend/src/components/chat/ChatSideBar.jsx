@@ -1,4 +1,4 @@
-import "./ChatSidebar.css";
+import "./ChatSideBar.css";
 
 const ChatSidebar = ({
   chats,
