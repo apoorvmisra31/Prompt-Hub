@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Prompt Hub - Welcome / Landing Page Styles
+   ========================================================================== */
+
+.landing-page {
+  min-height: 100dvh;
+  width: 100%;
+  background: var(--color-bg, #0f172a);
+  color: var(--color-text, #ffffff);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Top Navigation Bar
+   -------------------------------------------------------------------------- */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 64px;
+  box-sizing: border-box;
+  width: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), transparent);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.brand-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-icon .robot {
+  font-size: 1.6rem;
+  color: var(--color-primary, #3b82f6);
+}
+
+.brand-text {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: var(--color-text, #ffffff);
+  letter-spacing: -0.01em;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Buttons in Header */
+.top-nav .primary-btn,
+.top-nav .secondary-btn {
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition-fast, 120ms ease), transform var(--transition-fast, 120ms ease);
+}
+
+.top-nav .primary-btn {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+}
+
+.top-nav .primary-btn:hover {
+  background: #1d4ed8;
+}
+
+.top-nav .secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text, #e6e6e6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-nav .secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   Centered Landing Card Container
+   -------------------------------------------------------------------------- */
+.landing-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: calc(100dvh - 64px);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.landing-card {
+  width: 680px;
+  max-width: calc(100% - 48px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.15));
+  background-color: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 36px 48px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.landing-card .chip {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.landing-card .chip h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 6px 18px;
+  border-radius: 40px;
+  color: #e2e8f0;
+  letter-spacing: 0.01em;
+}
+
+.landing-card h1 {
+  margin: 0 0 16px 0;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(to right, #ff4500, #ff8c00, #ffcc00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-card h3 {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  font-weight: 600;
+  line-height: 1.5;
+  max-width: 560px;
+  background: linear-gradient(to right, #ff3b30, #ff9500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile Responsive Adjustments (max-width: 720px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .top-nav {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  .brand-text {
+    display: none;
+  }
+
+  .brand-icon .robot {
+    font-size: 2rem;
+  }
+
+  .top-nav .primary-btn,
+  .top-nav .secondary-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .landing-wrapper {
+    height: calc(100dvh - 56px);
+    padding: 16px;
+  }
+
+  .landing-card {
+    padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  .landing-card .chip h2 {
+    font-size: 0.85rem;
+    padding: 6px 14px;
+  }
+
+  .landing-card h1 {
+    font-size: 2rem;
+  }
+
+  .landing-card h3 {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+}

@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import "./Landing.css";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const [checking, setChecking] = useState(true);
 
-  // If user is already logged in, redirect straight to /home
+  // Non-blocking session check: if already authenticated, redirect to /home.
+  // Also serves as an asynchronous pre-warm ping for backend cold starts.
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
@@ -16,15 +17,12 @@ const Landing = () => {
         navigate("/home", { replace: true });
       })
       .catch(() => {
-        // Not logged in — stay on landing page
-        setChecking(false);
+        // Not logged in — user stays on landing page with zero delay
       });
   }, [navigate]);
 
-  if (checking) return null; // brief flash while verifying auth
-
   return (
-    <div>
+    <div className="landing-page">
       <header className="top-nav">
         <div
           className="nav-left"

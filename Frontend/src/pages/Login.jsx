@@ -1,5 +1,5 @@
-import { use, useState } from 'react';
-import { Link,useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
@@ -7,6 +7,11 @@ const Login = () => {
     const [ submitting, setSubmitting ] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    // Asynchronously pre-warm backend while user types credentials
+    useEffect(() => {
+        axios.get(`${import.meta.env.VITE_API_URL}/health`).catch(() => {});
+    }, []);
     
     function handleChange(e) {
         const { name, value } = e.target;
@@ -24,7 +29,7 @@ const Login = () => {
             {
                 withCredentials: true
             }
-        ).then((res) => {
+        ).then(() => {
             navigate("/home");
         }).catch((err) => {
             if (err.response && err.response.data && err.response.data.message) {

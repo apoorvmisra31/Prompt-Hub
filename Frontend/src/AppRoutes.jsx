@@ -1,18 +1,22 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
 import Landing from './pages/Landing'
 import Register from './pages/Register'
 import Login from './pages/Login'
 
+const Home = lazy(() => import('./pages/Home'))
+
 const AppRoutes = () => {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<Landing />} />
-                <Route path='/home' element={<Home />} />
-                <Route path='/register' element={<Register />} />
-                <Route path='/login' element={<Login />} />
-            </Routes>
+            <Suspense fallback={null}>
+                <Routes>
+                    <Route path='/' element={<Landing />} />
+                    <Route path='/home' element={<Home />} />
+                    <Route path='/register' element={<Register />} />
+                    <Route path='/login' element={<Login />} />
+                </Routes>
+            </Suspense>
         </BrowserRouter>
     )
 }

@@ -18,7 +18,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors({
   origin: function (origin, callback) {
     if (
@@ -34,11 +33,20 @@ app.use(cors({
   credentials: true,
 }));
 
+// API root and health check
+app.get('/', (req, res) => {
+  res.status(200).json({ status: 'ok', service: 'Prompt Hub API' });
+});
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', service: 'Prompt Hub API' });
+});
+
 app.use('/api/auth', authRoute);
 app.use('/api/chat', chatRoute);
 
-app.get('*name', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+app.use((req, res) => {
+  res.status(404).json({ message: 'Not found' });
 });
 
 module.exports = app;
